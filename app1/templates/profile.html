@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Page{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="col-md-6 col-lg-4">
+    <h1 class="text-center mb-4 text-success">Profile Page</h1>
+    
+    {% if user.is_authenticated %}
+    
+    <!-- Navigation based on role -->
+    {% if user.role == 'chef' %}
+  <div class="text-center mb-4">
+    <a href="/app1/chef" class="btn btn-light btn-lg w-75 mx-auto py-2 px-3 border border-dark">
+      Go to Chef Dashboard
+    </a>
+  </div>
+{% elif user.role == 'viewer' %}
+  <div class="text-center mb-4">
+    <a href="/app1/viewer" class="btn btn-light btn-lg w-75 mx-auto py-2 px-3 border border-dark">
+      Go to Viewer Dashboard
+    </a>
+  </div>
+{% elif user.username == 'admin' %}
+  <div class="text-center mb-4">
+    <a href="/app1/home" class="btn btn-light btn-lg w-75 mx-auto py-2 px-3 border border-dark">
+      Go to Home Dashboard
+    </a>
+  </div>
+{% endif %}
+
+
+    
+    <!-- Profile Update Form -->
+    <form action="/app1/profile" method="post" class="p-4 rounded shadow bg-light">
+      {% csrf_token %}
+      
+      <!-- Messages for feedback -->
+      {% for i in messages %}
+        {% if i.tags == 'error' %}
+          <div class="alert alert-danger">{{ i }}</div>
+        {% elif i.tags == 'success' %}
+          <div class="alert alert-success">{{ i }}</div>
+        {% endif %}
+      {% endfor %}
+      
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" value="{{ user.username }}" class="form-control" id="username" required>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="pass1" class="form-label">New Password</label>
+        <input type="password" name="pass1" class="form-control" id="pass1" required>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label for="pass2" class="form-label">Confirm Password</label>
+        <input type="password" name="pass2" class="form-control" id="pass2" required>
+      </div>
+
+      <!-- Update Button -->
+      <div class="d-flex justify-content-center mt-4">
+        <button type="submit" class="btn btn-success w-100">Update Profile</button>
+      </div>
+    </form>
+
+    <!-- Logout Button -->
+    <div class="text-center mt-3">
+      <h3><a href="/app1/logout" class="btn btn-danger w-100">Logout</a></h3>
+    </div>
+
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

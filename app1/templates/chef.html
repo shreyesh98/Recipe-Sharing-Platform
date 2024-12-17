@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %} Chef's Page {% endblock %}
+
+{%load custom%}
+
+{% block content %}
+<div class="container mt-5">
+    {% if user.is_authenticated %}
+        <h1 class="text-center text-success">Welcome Chef {{ user.username | up}}!</h1>
+        
+        <!-- Profile & Logout Links (at the top for quick access) -->
+        <div class="d-flex justify-content-end mb-4">
+            <a href="/app1/profile" class="btn btn-info btn-sm me-2">Profile</a>
+            <a href="/app1/logout" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+
+        <!-- Recipe Submission Form -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6">
+                <h2 class="text-center">Submit a New Recipe</h2>
+                <form action="/app1/chef" enctype="multipart/form-data" method="post" class="border p-4 rounded shadow">
+                    {% csrf_token %}
+                    <input type="hidden" name="method" value="POST">
+
+                    <div class="form-group mb-3">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" class="form-control form-control-sm" placeholder="Enter recipe name" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="ing">Ingredients:</label>
+                        <textarea name="ing" class="form-control form-control-sm" rows="4" placeholder="Enter ingredients here" required></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="cook">Cooking Instructions:</label>
+                        <textarea name="cook" class="form-control form-control-sm" rows="4" placeholder="Describe cooking instructions" required></textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="cat">Category:</label>
+                        <select name="cat" class="form-control form-control-sm" required>
+                            {% for val, lab in choices %}
+                                <option value="{{ val }}">{{ lab | up}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="img">Image:</label>
+                        <input type="file" name="img" class="form-control form-control-sm">
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-sm">Submit Recipe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Recipe Category Display -->
+        <div class="mb-5">
+            {% for value, label in choices %}
+                <div class="category-section mb-4">
+                    <h3 class="text-center text-primary">{{ label | up}}</h3>
+
+                    <div class="row">
+                        {% for i in all %}
+                            {% if i.cat == label %}
+                                <div class="col-md-4 mb-4">
+                                    <div class="card shadow-sm">
+                                        <img src="/media/{{ i.img }}" class="card-img-top" alt="{{ i.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ i.name }}</h5>
+                                            <p class="card-text"><strong>Ingredients:</strong><br> {{ i.ing }}</p>
+                                            <p class="card-text"><strong>Cooking Instructions:</strong> <br>{{ i.cook }}</p>
+                                            <p class="card-text"><strong>Category:</strong> {{ i.cat | up}}</p>
+
+                                            <!-- Edit and Delete Form -->
+                                            <form action="/app1/chef" enctype="multipart/form-data" method="post" class="mt-3">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="method" value="PUT">
+                                                <input type="hidden" name="id" value="{{ i.id }}">
+
+                                                <div class="form-group mb-2">
+                                                    <label for="name">Name:</label>
+                                                    <input type="text" name="name" class="form-control form-control-sm" value="{{ i.name }}" required placeholder="Recipe name">
+                                                </div>
+
+                                                <div class="form-group mb-2">
+                                                    <label for="ing">Ingredients:</label>
+                                                    <textarea name="ing" class="form-control form-control-sm" rows="4" required placeholder="Enter ingredients">{{ i.ing }}</textarea>
+                                                </div>
+
+                                                <div class="form-group mb-2">
+                                                    <label for="cook">Cooking Instructions:</label>
+                                                    <textarea name="cook" class="form-control form-control-sm" rows="4" required placeholder="Cooking instructions">{{ i.cook }}</textarea>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="cat">Category:</label>
+                                                    <select name="cat" class="form-control form-control-sm" required>
+                                                        {% for val, lab in choices %}
+                                                            <option value="{{ val }}" {% if val == i.cat %} selected {% endif %}>{{ lab | up}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="img">Image:</label>
+                                                    <input type="file" name="img" class="form-control form-control-sm">
+                                                </div>
+
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-primary btn-sm">Update Recipe</button>
+                                                </div>
+                                            </form>
+
+                                            <!-- Delete Form -->
+                                            <form action="/app1/chef" method="post" class="mt-3">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="method" value="DELETE">
+                                                <input type="hidden" name="id" value="{{ i.id }}">
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <h3>Please <a href="/app1/login">log in</a> to access this page.</h3>
+    {% endif %}
+</div>
+{% endblock %}

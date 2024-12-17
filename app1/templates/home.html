@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %} Home {% endblock %}
+
+{%load custom%}
+
+{% block content %}
+<div class="container text-center mt-5">
+  {% if user.is_authenticated %}
+    <h1 class="text-success">Hello, {{ user.username | up}}!</h1>
+    <div class="d-flex flex-column align-items-center mt-4">
+
+      <!-- Navigation Buttons -->
+      <a href="/app1/profile" class="btn btn-primary btn-block mb-3" style="width: 300px;">Profile</a>
+      <a href="/app1/chef" class="btn btn-success btn-block mb-3" style="width: 300px;">Chef Page</a>
+      <a href="/app1/viewer" class="btn btn-info btn-block mb-3" style="width: 300px;">Viewer Page</a>
+      <a href="/app1/fav" class="btn btn-warning btn-block mb-3" style="width: 300px;">Favorites</a>
+      <a href="/app1/logout" class="btn btn-danger btn-block mb-3" style="width: 300px;">Logout</a>
+
+    </div>
+  {% else %}
+    <h2>Welcome to RecipeHub</h2>
+    <p>To access your account and share recipes, please log in or register.</p>
+    <div class="d-flex flex-column align-items-center mt-4">
+      
+      <!-- Login and Register Buttons -->
+      <a href="/app1/login" class="btn btn-primary btn-block mb-3" style="width: 300px;">Login</a>
+      <a href="/app1/register" class="btn btn-secondary btn-block mb-3" style="width: 300px;">Register</a>
+    
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

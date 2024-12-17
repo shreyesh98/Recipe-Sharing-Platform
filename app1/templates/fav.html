@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %} Favorite Page {% endblock %}
+
+{%load custom%}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Favorite Recipes</h1>
+    <h2><a href="/app1/viewer" class="btn btn-secondary mb-4">Back to Viewer Page</a></h2>
+
+    <div class="row">
+        {% for i in all %}
+            {% if i.name == user.username %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm border-light rounded">
+                        <img src="/media/{{ i.rec_fav.img }}" class="card-img-top rounded-top" alt="{{ i.rec_fav.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ i.rec_fav.name }}</h5>
+                            <p class="card-text"><strong>Ingredients:</strong><br> {{ i.rec_fav.ing }}</p>
+                            <p class="card-text"><strong>Cooking Instructions:</strong><br> {{ i.rec_fav.cook }}</p>
+                            <p class="card-text"><strong>By Chef:</strong> {{ i.rec_fav.cus_rec.username | up}}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
